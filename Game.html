@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card Matching Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; 
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 200px);
+            gap: 10px;
+        }
+        img {
+            cursor: pointer;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<h1> Memory Flip</h1>
+<body>
+    <div class="grid">
+        <img id="img1" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img2" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img3" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img4" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img5" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img6" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img7" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img8" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img9" src="images/Back1.jpg" height="200" width="200" />
+        <img id="img10" src="images/Back1.jpg" height="200" width="200" />
+    </div>
+    <button id="resetButton">Reset Game</button>
+
+    <script>
+        const images = [
+            "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg", "images/6.jpg",
+            "images/2.jpg", "images/3.jpg", "images/4.jpg", "images/5.jpg", "images/6.jpg"
+        ];
+        let shuffledImages = [];
+        let selectedCards = [];
+        let matchedPairs = 0;
+
+        const grid = document.querySelector('.grid');
+        const resetButton = document.getElementById('resetButton');
+
+        
+        function shuffleImages() {
+            shuffledImages = [...images];
+            shuffledImages.sort(() => Math.random() - 0.5);
+        }
+
+        
+        function resetGame() {
+            shuffleImages();
+            matchedPairs = 0;
+            selectedCards = [];
+            document.querySelectorAll('img').forEach((img, index) => {
+                img.src = "images/Back1.jpg";
+                img.dataset.index = index; 
+                img.style.pointerEvents = "auto"; 
+            });
+        }
+
+        
+        function handleCardClick(event) {
+            const img = event.target;
+            const index = img.dataset.index;
+
+            
+            img.src = shuffledImages[index];
+
+            
+            selectedCards.push({ img, index });
+
+           
+            img.style.pointerEvents = "none";
+
+            
+            if (selectedCards.length === 2) {
+                const [firstCard, secondCard] = selectedCards;
+
+                if (shuffledImages[firstCard.index] === shuffledImages[secondCard.index]) {
+                    
+                    matchedPairs++;
+                    selectedCards = [];
+
+                    
+                    if (matchedPairs === images.length / 2) {
+                        setTimeout(() => alert("Congratulations! You've matched all pairs!"), 200);
+                    }
+                } else {
+                    
+                    setTimeout(() => {
+                        firstCard.img.src = "images/Back1.jpg";
+                        secondCard.img.src = "images/Back1.jpg";
+                        firstCard.img.style.pointerEvents = "auto";
+                        secondCard.img.style.pointerEvents = "auto";
+                        selectedCards = [];
+                    }, 1000);
+                }
+            }
+        }
+
+        
+        function initializeGame() {
+            shuffleImages();
+            document.querySelectorAll('img').forEach((img, index) => {
+                img.dataset.index = index; 
+                img.addEventListener('click', handleCardClick);
+            });
+        }
+
+        
+        resetButton.addEventListener('click', resetGame);
+
+        
+        initializeGame();
+    </script>
+</body>
+</html>
